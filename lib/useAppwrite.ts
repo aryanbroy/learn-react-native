@@ -6,22 +6,26 @@ const useAppwrite = (fn: () => Promise<Data[] | undefined>) => {
   const [data, setData] = useState<Data[] | undefined>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = (await fn()) as Data[] | undefined;
+      setData(res);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Something went wrong while fetching videos");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const res = (await fn()) as Data[] | undefined;
-        setData(res);
-      } catch (error) {
-        console.log(error);
-        Alert.alert("Error", "Something went wrong while fetching videos");
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchData();
   }, []);
-  return { data, isLoading };
+
+  const refetch = () => fetchData();
+
+  return { data, isLoading, refetch };
 };
 
 export default useAppwrite;

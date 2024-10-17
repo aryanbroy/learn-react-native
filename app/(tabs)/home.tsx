@@ -15,10 +15,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface Item {
-  id: number;
-}
-
 export interface User {
   $id: string;
   accountId: string;
@@ -37,26 +33,29 @@ export interface Data {
 }
 
 export default function Home() {
-  const { data: posts } = useAppwrite(
-    () => getAllPosts() as Promise<Data[] | undefined>
-  );
+  const {
+    data: posts,
+    isLoading,
+    refetch,
+  } = useAppwrite(() => getAllPosts() as Promise<Data[] | undefined>);
   console.log(posts);
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    // do some shit
+    console.log("calling refetch");
+    await refetch();
+    console.log("have called refetch");
     setRefreshing(false);
   };
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ id: 1 }, { id: 2 }] as Item[]}
-        // data={[] as Item[]}
+        data={posts}
         renderItem={({ item }) => (
-          <Text className="text-3xl text-white">{item.id}</Text>
+          <Text className="text-3xl text-white">{item.title}</Text>
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.$id}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6">
