@@ -2,15 +2,45 @@ import EmptyState from "@/components/EmptyState";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import { images } from "@/constants";
-import { useState } from "react";
-import { FlatList, Image, RefreshControl, Text, View } from "react-native";
+import { getAllPosts } from "@/lib/appwrite";
+import useAppwrite from "@/lib/useAppwrite";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  FlatList,
+  Image,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Item {
   id: number;
 }
 
+export interface User {
+  $id: string;
+  accountId: string;
+  avatar: string;
+  email: string;
+  username: string;
+}
+
+export interface Data {
+  $id: string;
+  prompt: string;
+  thumbnail: string;
+  title: string;
+  users: User[];
+  video: string;
+}
+
 export default function Home() {
+  const { data: posts } = useAppwrite(
+    () => getAllPosts() as Promise<Data[] | undefined>
+  );
+  console.log(posts);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
