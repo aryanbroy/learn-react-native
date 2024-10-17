@@ -2,7 +2,8 @@ import EmptyState from "@/components/EmptyState";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import { images } from "@/constants";
-import { FlatList, Image, Text, View } from "react-native";
+import { useState } from "react";
+import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Item {
@@ -10,11 +11,18 @@ interface Item {
 }
 
 export default function Home() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // do some shit
+    setRefreshing(false);
+  };
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        // data={[{ id: 1 }, { id: 2 }] as Item[]}
-        data={[] as Item[]}
+        data={[{ id: 1 }, { id: 2 }] as Item[]}
+        // data={[] as Item[]}
         renderItem={({ item }) => (
           <Text className="text-3xl text-white">{item.id}</Text>
         )}
@@ -54,6 +62,9 @@ export default function Home() {
             subtitle="Be the first one to upload a video"
           />
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
