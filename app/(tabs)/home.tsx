@@ -1,6 +1,7 @@
 import EmptyState from "@/components/EmptyState";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
+import VideoCard from "@/components/VideoCard";
 import { images } from "@/constants";
 import { getAllPosts } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
@@ -28,7 +29,7 @@ export interface Data {
   prompt: string;
   thumbnail: string;
   title: string;
-  users: User[];
+  users: User;
   video: string;
 }
 
@@ -38,23 +39,18 @@ export default function Home() {
     isLoading,
     refetch,
   } = useAppwrite(() => getAllPosts() as Promise<Data[] | undefined>);
-  console.log(posts);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    console.log("calling refetch");
     await refetch();
-    console.log("have called refetch");
     setRefreshing(false);
   };
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
         data={posts}
-        renderItem={({ item }) => (
-          <Text className="text-3xl text-white">{item.title}</Text>
-        )}
+        renderItem={({ item }) => <VideoCard video={item} />}
         keyExtractor={(item) => item.$id}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
